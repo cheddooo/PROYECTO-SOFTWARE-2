@@ -22,9 +22,10 @@ function crearAuthMiddleware(tokenService) {
     } catch (error) {
       return res.status(401).json({
         success: false,
-        message: error.name === 'TokenExpiredError'
-          ? 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.'
-          : 'Token inválido o sesión cerrada.',
+        message:
+          error.name === 'TokenExpiredError'
+            ? 'Tu sesión ha expirado. Por favor inicia sesión nuevamente.'
+            : 'Token inválido o sesión cerrada.',
       });
     }
   };
@@ -33,7 +34,8 @@ function crearAuthMiddleware(tokenService) {
     if (!req.user || req.user.tipo_usuario !== 'NINERA') {
       return res.status(403).json({
         success: false,
-        message: 'Acceso restringido: Solo niñeras autorizadas pueden realizar esta operación.',
+        message:
+          'Acceso restringido: Solo niñeras autorizadas pueden realizar esta operación.',
       });
     }
     return next();
@@ -43,9 +45,22 @@ function crearAuthMiddleware(tokenService) {
     if (!req.user || req.user.tipo_usuario !== 'FAMILIA') {
       return res.status(403).json({
         success: false,
-        message: 'Acceso restringido: Solo familias pueden realizar esta operación.',
+        message:
+          'Acceso restringido: Solo familias pueden realizar esta operación.',
       });
     }
+    return next();
+  };
+
+  const soloAdmin = (req, res, next) => {
+    if (!req.user || req.user.tipo_usuario !== 'ADMIN') {
+      return res.status(403).json({
+        success: false,
+        message:
+          'Acceso restringido: solo administradores pueden realizar esta operación.',
+      });
+    }
+
     return next();
   };
 
@@ -53,6 +68,7 @@ function crearAuthMiddleware(tokenService) {
     autenticar,
     soloNinera,
     soloFamilia,
+    soloAdmin,
   };
 }
 

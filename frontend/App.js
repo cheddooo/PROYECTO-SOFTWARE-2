@@ -9,6 +9,7 @@ import EditFamilyProfileScreen from './src/screens/EditFamilyProfileScreen';
 import ChildrenScreen from './src/screens/ChildrenScreen';
 import ChildFormScreen from './src/screens/ChildFormScreen';
 import MultimediaScreen from './src/screens/MultimediaScreen';
+import AdminDashboardScreen from './src/screens/AdminDashboardScreen';
 import FamilyDashboardScreen from './src/screens/FamilyDashboardScreen';
 import { API_BASE_URL, AUTH_API_URL } from './src/config/api';
 
@@ -51,10 +52,12 @@ export default function App() {
     setAuthToken(token);
     cargarFotoPerfil(token);
 
-    if (user?.rol === 'NINERA') {
+    if (user?.rol === 'ADMIN') {
+      setCurrentScreen('adminDashboard');
+    } else if (user?.rol === 'NINERA') {
       setCurrentScreen('nannyDashboard');
     } else if (user?.rol === 'FAMILIA') {
-      setCurrentScreen('familyDashboard');
+      setCurrentScreen('familyChildren');
     } else {
       setCurrentScreen('landing');
     }
@@ -111,6 +114,16 @@ export default function App() {
       ...updatedUser,
     }));
   };
+
+  if (currentScreen === 'adminDashboard' && currentUser) {
+    return (
+      <AdminDashboardScreen
+        user={currentUser}
+        token={authToken}
+        onLogout={handleLogout}
+      />
+    );
+  }
 
   if (currentScreen === 'nannyDashboard' && currentUser) {
     return (
